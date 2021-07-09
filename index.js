@@ -1,27 +1,25 @@
-const http = require("http");
-const url = require("url");
-const fs = require("fs");
+const { Router } = require('express');
+const express = require('express')
+const path = require('path')
+const app = express();
+const port = 8080;
 
-http
-  .createServer(function (req, res) {
-    const q = url.parse(req.url, true);
-    let filePath = `./pages${q.pathname === "/" ? "/index" : q.pathname}.html`;
-    console.log(filePath);
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname, "/pages/index.html"))
+})
 
-    fs.readFile(filePath, function (err, data) {
-      console.log(filePath);
+app.get('/contact-me', function (req, res) {
+  res.sendFile(path.join(__dirname, "/pages/contact-me.html"))
+})
 
-      if (err) {
-        return fs.readFile('./pages/404.html', (err, data) => {
-            res.writeHead(404, { "Content-Type": "text/html" });
-            res.write(data);
-            return res.end();
-        })
-      
-      }
-      res.writeHead(200, { "Content-Type": "text/html" });
-      res.write(data);
-      return res.end();
-    });
-  })
-  .listen(8080);
+app.get('/about', function (req, res) {
+  res.sendFile(path.join(__dirname, "/pages/about.html"))
+})
+
+app.get('*', function (req, res) {
+  res.sendFile(path.join(__dirname, "/pages/404.html"))
+})
+
+app.listen(port, () => {
+  console.log(`Basic website app listening on port ${port}`);  
+})
